@@ -22,7 +22,13 @@ let package = Package(
             branch: "main"
         )],
     targets: [
-        .executableTarget(name: "CommandLineInterface", path: "Sources/CommandLineInterface"),
+        .executableTarget(
+            name: "CommandLineInterface",
+            dependencies: [
+                "Topology"
+            ],
+            path: "Sources/CommandLineInterface"
+        ),
         .target(name: "Topology", path: "Sources/Topology"),
         .testTarget(
             name: "TopologyTests",
@@ -31,6 +37,7 @@ let package = Package(
                     name: "Testing", 
                     package: "swift-testing"
                 ),
+                "Topology",
             ],
             path: "Tests/TopologyTests"
         ),
