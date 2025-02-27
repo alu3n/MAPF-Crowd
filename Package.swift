@@ -15,6 +15,10 @@ let package = Package(
             name: "Topology", 
             targets: ["Topology"]
         ),
+        .executable(
+            name: "Experimental", 
+            targets: ["Experimental"]
+        ),
     ],
     dependencies: [
         .package(
@@ -41,6 +45,10 @@ let package = Package(
             ],
             path: "Tests/TopologyTests"
         ),
+        .executableTarget(
+            name: "Experimental",
+            path: "Sources/Experimental"
+        )
     ]
     
 )
