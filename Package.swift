@@ -47,6 +47,9 @@ let package = Package(
         ),
         .executableTarget(
             name: "Experimental",
+            dependencies: [
+                "Topology",
+            ],
             path: "Sources/Experimental"
         )
     ]

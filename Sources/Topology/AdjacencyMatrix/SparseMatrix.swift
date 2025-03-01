@@ -20,11 +20,11 @@ package struct SparseMatrix<ElementType> {
         self.cummulativeColumnEntries = Array(repeating: 0, count: nColumns)
     }
 
-    package func getAt(rowIndex: Int, columnIndex: Int) -> ElementType? {
+    package func getAt(_ rowIndex: Int, _ columnIndex: Int) -> ElementType? {
         assert(rowIndex >= 0 && rowIndex < nRows, "Row index \(rowIndex) outside the [0,\(nRows)) interval") 
         assert(columnIndex >= 0 && columnIndex < nColumns, "Column index \(columnIndex) outside the [0,\(nColumns)) interval")
 
-        if let index = getIndex(rowIndex: rowIndex, columnIndex: columnIndex) {
+        if let index = getIndex(rowIndex, columnIndex) {
             return values[index]
         }
         else {
@@ -32,7 +32,7 @@ package struct SparseMatrix<ElementType> {
         }
     }
     
-    private func getIndex(rowIndex: Int, columnIndex: Int) -> Int? {
+    private func getIndex(_ rowIndex: Int, _ columnIndex: Int) -> Int? {
         let first = columnIndex == 0 ? 0 : cummulativeColumnEntries[columnIndex-1]
         let last = cummulativeColumnEntries[columnIndex]
         
@@ -45,11 +45,11 @@ package struct SparseMatrix<ElementType> {
         return nil
     }
 
-    package mutating func setAt(rowIndex: Int, columnIndex: Int, value: ElementType) {
+    package mutating func setAt(_ rowIndex: Int, _ columnIndex: Int, value: ElementType) {
         assert(rowIndex >= 0 && rowIndex < nRows, "Row index \(rowIndex) outside the [0,\(nRows)) interval") 
         assert(columnIndex >= 0 && columnIndex < nColumns, "Column index \(columnIndex) outside the [0,\(nColumns)) interval")
         
-        if let index = getIndex(rowIndex: rowIndex, columnIndex: columnIndex) {
+        if let index = getIndex(rowIndex, columnIndex) {
             values[index] = value 
         }
         else {
@@ -64,11 +64,11 @@ package struct SparseMatrix<ElementType> {
 
     }
 
-    func insertionIndex(rowIndex: Int, columnIndex: Int) -> Int {
+    private func insertionIndex(rowIndex: Int, columnIndex: Int) -> Int {
         let first = columnIndex == 0 ? 0 : cummulativeColumnEntries[columnIndex-1]
         let last = cummulativeColumnEntries[columnIndex]
         
-        var index = cummulativeColumnEntries[columnIndex]
+        var index = first 
 
         if first == last {
             return index
@@ -85,6 +85,20 @@ package struct SparseMatrix<ElementType> {
             return index
         }
     }
-    
+
+    package func nonEmptyRows(columnIndex: Int) -> [Int] {
+        assert(columnIndex >= 0 && columnIndex < nColumns, "Column index \(columnIndex) outside the [0,\(nColumns)) interval")
+        
+        let first = columnIndex == 0 ? 0 : cummulativeColumnEntries[columnIndex-1]
+        let last = cummulativeColumnEntries[columnIndex]
+        
+        return Array(rowIndices[first..<last])
+    }
+
+    // package func transpose() -> SparseMatrix {
+    //     // TODO
+    // }
+
+
 }
 

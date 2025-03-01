@@ -1,10 +1,10 @@
 
-struct AdjacencyMatrix<VertexPayload, EdgePayload, FacePayload> {
+struct AdjacencyMatrix {
     let nVertices: Int
     let nEdges: Int
     let nFaces: Int
 
-    var vertices: [VertexPayload?]
-    var edges: [EdgePayload?]
-    var faces: [FacePayload?]
+    var edgeTopology: [SparseMatrix<Int>]
+    var faceTopology: [SparseMatrix<Int>]
 }
+
