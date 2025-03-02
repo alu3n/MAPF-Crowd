@@ -3,23 +3,30 @@
 package struct AbstractSimplicial2Complex {
     let nVertices: Int
     let nEdges: Int
-    let nFaces: Int
+    let nTriangles: Int
 
     let vertexEdgeAdjacency: SparseMatrix<Int>
     let edgeVertexAdjacency: SparseMatrix<Int>
-    let edgeFaceAdjacency: SparseMatrix<Int>
-    let faceEdgeAdjacency: SparseMatrix<Int>
+    let edgeTriangleAdjacency: SparseMatrix<Int>
+    let triangleEdgeAdjacency: SparseMatrix<Int>
+    
 
-    init(nVertices: Int, edges: [Edge], faces: [Face]) {
+
+    init(nVertices: Int, edges: [Edge], triangles: [Triangle]) {
         assert(nVertices > 0, "There must be at least one vertex")
        
         self.nVertices = nVertices
         nEdges = edges.count
-        nFaces = faces.count
+        nTriangles = triangles.count
         
+        vertexEdgeAdjacency = AbstractSimplicial2Complex.getVertexEdgeAdjacency(nVertices: nVertices, edges: edges)
+        edgeVertexAdjacency = vertexEdgeAdjacency.transpose() 
+
+        edgeTriangleAdjacency = AbstractSimplicial2Complex.getEdgeTriangleAdjacency(edges: edges, triangles: triangles)
+        triangleEdgeAdjacency = edgeTriangleAdjacency.transpose()
     }
 
-    private func getVertexEdgeAdjacency(nVertices: Int, edges: [Edge]) -> SparseMatrix<Int> {
+    private static func getVertexEdgeAdjacency(nVertices: Int, edges: [Edge]) -> SparseMatrix<Int> {
         var matrix = SparseMatrix<Int>(nRows: edges.count, nColumns: nVertices)
         
         for edgeIndex in 0..<edges.count {
@@ -35,13 +42,19 @@ package struct AbstractSimplicial2Complex {
         return matrix
     }
 
-    private func getEdgeFaceAdjacency(edges: [Edge], faces: [Face]) -> SparseMatrix<Int> {
+    private static func getEdgeTriangleAdjacency(edges: [Edge], triangles: [Triangle]) -> SparseMatrix<Int> {
 
-        var matrix = SparseMatrix<Int>(nRows: edges.count, nColumns: faces.count)
+        var matrix = SparseMatrix<Int>(nRows: edges.count, nColumns: triangles.count)
 
-        for faceIndex in 0..<faces.count {
-                        
+        for triangleIndex in 0..<triangles.count {
+            let triangle = triangles[triangleIndex]
+
+            matrix.setAt(triangleIndex, triangle.edge0, value: triangle.flip0 ? -1 : 1)
+            matrix.setAt(triangleIndex, triangle.edge1, value: triangle.flip1 ? -1 : 1)
+            matrix.setAt(triangleIndex, triangle.edge2, value: triangle.flip2 ? -1 : 1)
         }
+
+        return matrix
     }
 
 

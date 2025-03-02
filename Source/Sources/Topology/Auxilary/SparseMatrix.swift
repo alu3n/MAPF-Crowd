@@ -19,7 +19,7 @@ package struct SparseMatrix<ElementType> {
     let nRows: Int
     let nColumns: Int
     
-    var values: [ElementType] = []
+    var values: [ElementType?] = []
     var rowIndices: [Int] = []
     var cummulativeColumnEntries: [Int]
     // cummulativeColumnEntries[k] specifies the total number of entries in the columns {0,...,k}
@@ -56,7 +56,7 @@ package struct SparseMatrix<ElementType> {
         return nil
     }
 
-    package mutating func setAt(_ rowIndex: Int, _ columnIndex: Int, value: ElementType) {
+    package mutating func setAt(_ rowIndex: Int, _ columnIndex: Int, value: ElementType?) {
         assert(rowIndex >= 0 && rowIndex < nRows, "Row index \(rowIndex) outside the [0,\(nRows)) interval") 
         assert(columnIndex >= 0 && columnIndex < nColumns, "Column index \(columnIndex) outside the [0,\(nColumns)) interval")
         
@@ -106,9 +106,18 @@ package struct SparseMatrix<ElementType> {
         return Array(rowIndices[first..<last])
     }
 
-    // package func transpose() -> SparseMatrix {
-    //     // TODO
-    // }
+    package func transpose() -> SparseMatrix<ElementType> {
+        var matrix = SparseMatrix<ElementType>(nRows: self.nColumns, nColumns: self.nRows) 
+
+        for columnIndex in 0..<self.nColumns {
+            for rowIndex in nonEmptyRows(columnIndex: columnIndex) {
+                let value = self.getAt(rowIndex, columnIndex)
+                matrix.setAt(columnIndex, rowIndex, value: value)
+            }
+        }
+
+        return matrix
+   }
 
 
 }
