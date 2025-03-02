@@ -1,11 +1,20 @@
-// Representation of Sparse SparseMatrix
-// This DataStructure uses the compressed column format
-// Source: http://15462.courses.cs.cmu.edu/fall2021/
-// cummulativeColumnEntries[k] specifies the total number of entries in the columns {0,...,k}
+/**
+DataStructured intended to store sparse matrices
+- this implementation uses the compressed column format
+- implementation idea based on lecture 10 (meshes an d manifolds) from http://15462.courses.cs.cmu.edu/fall2021/
 
-// Undefined entries are returned as "undefined" optional, not "zero" values 
+Undefined entries are returned as "undefined" optional, not "zero" values 
 
+Time complexities
+- Initialization O(nColumns)
+- Accessing value O(maxNonZeroEntriesInAColumn)
+- Changing value O(nColumns)
+- Accessing list of non zero indices of a given column O(maxNonZeroEntriesInAColumn)
+- Accessing list of non zero indices of a given row:
+    - Would be O(numberOfNonZeroEntries)
+    - Is not implemented at the moment
 
+*/
 package struct SparseMatrix<ElementType> {
     let nRows: Int
     let nColumns: Int
@@ -13,7 +22,9 @@ package struct SparseMatrix<ElementType> {
     var values: [ElementType] = []
     var rowIndices: [Int] = []
     var cummulativeColumnEntries: [Int]
-    
+    // cummulativeColumnEntries[k] specifies the total number of entries in the columns {0,...,k}
+
+
     package init(nRows: Int, nColumns: Int) {
         self.nRows = nRows
         self.nColumns = nColumns
