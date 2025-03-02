@@ -40,7 +40,7 @@ package struct AbstractSimplicial2Complex {
         var matrix = SparseMatrix<Int>(nRows: edges.count, nColumns: faces.count)
 
         for faceIndex in 0..<faces.count {
-            
+                        
         }
     }
 
