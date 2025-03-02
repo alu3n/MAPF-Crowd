@@ -8,7 +8,7 @@ Edge flips are represented explicitly to avoid ambiguity of 0 indexed edge when 
 
 */
 
-package struct Triangle : Equatable {
+package struct Triangle : Equatable, Hashable {
     let edge0: Int
     let edge1: Int
     let edge2: Int
@@ -17,7 +17,7 @@ package struct Triangle : Equatable {
     let flip1: Bool
     let flip2: Bool
 
-    init(_ edge0: Int, _ edge1: Int, _ edge2: Int) {
+    package init(_ edge0: Int, _ edge1: Int, _ edge2: Int) {
         self.edge0 = edge0
         self.edge1 = edge1
         self.edge2 = edge2
@@ -27,7 +27,7 @@ package struct Triangle : Equatable {
         flip2 = false
     }
 
-    init(_ edge0: Int, _ edge1: Int, _ edge2: Int, _ flip0: Bool, _ flip1: Bool, _ flip2: Bool) {
+    package init(_ edge0: Int, _ edge1: Int, _ edge2: Int, _ flip0: Bool, _ flip1: Bool, _ flip2: Bool) {
         self.edge0 = edge0
         self.edge1 = edge1
         self.edge2 = edge2
