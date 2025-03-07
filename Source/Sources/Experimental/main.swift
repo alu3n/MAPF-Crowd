@@ -1,26 +1,32 @@
-import Topology
+import Geometry
+import Foundation
+import simd
 
-// var matrix = Topology.SparseMatrix<Int>(nRows: 4,nColumns: 4)
-//
-//
-// print("matrix created")
-// matrix.setAt(0, 0, value: 0)
-// matrix.setAt(1, 0, value: 1)
-// matrix.setAt(2, 0, value: 2)
-// matrix.setAt(0, 1, value: 3)
-// matrix.setAt(2, 2, value: 4)
-// matrix.setAt(3, 2, value: 5)
-// matrix.setAt(0, 2, value: 6)
-// matrix.setAt(1, 3, value: 7)
-//
-//
-// print("creation success")
-// let val0 = matrix.nonEmptyRows(columnIndex: 0)
-// let val1 = matrix.nonEmptyRows(columnIndex: 1)
-// let val2 = matrix.nonEmptyRows(columnIndex: 2)
-// let val3 = matrix.nonEmptyRows(columnIndex: 3)    
-//
-// print(val0)
-// print(val1)
-// print(val2)
-// print(val3)
+var mesh = StaticMeshFactory.unitGrid(nRows: 7,nColumns: 7)
+
+let cost: (simd_float3) -> Float = { x in
+    return 0
+}    
+
+var optimizer = RubberBandOptimizer(cost: cost, edgeSamples: 5)
+optimizer.loadStaticMesh(staticMesh: mesh)
+optimizer.executeIteration()
+mesh = optimizer.getResult()
+
+do {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = .prettyPrinted
+    let jsonData = try encoder.encode(mesh)
+
+    let fileManager = FileManager.default
+    let homeDirectory = fileManager.homeDirectoryForCurrentUser
+    let repositoriesDirectory = homeDirectory.appendingPathComponent("Repositories/MAPF-Crowd")
+
+    if !fileManager.fileExists(atPath: repositoriesDirectory.path) {
+        try fileManager.createDirectory(at: repositoriesDirectory, withIntermediateDirectories: true, attributes: nil)
+    }
+    
+    let fileURL = repositoriesDirectory.appendingPathComponent("numbers.json")
+     
+    try jsonData.write(to: fileURL)
+}
