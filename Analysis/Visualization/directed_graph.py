@@ -11,7 +11,7 @@ def drawDirectedGraph(description):
     G.add_nodes_from(vertices)
     G.add_edges_from(edges)
    
-
-    plt.figure()
+    plt.figure(figsize=(3,3))
+    plt.gca().set_aspect('equal', adjustable='box')
     nx.draw(G, pos=positions, with_labels=True, node_color='lightblue', edge_color='gray', arrows=True)
     plt.show()
