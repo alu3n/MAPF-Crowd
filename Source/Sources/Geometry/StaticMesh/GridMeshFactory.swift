@@ -13,7 +13,9 @@ package enum StaticMeshFactory{
                 outgoingEdges($0.0,$0.1,nRows,nColumns)
             }
         // Todo: Add triangles
+        print("so far so good") 
         let as2c = AS2C(nVertices: vertexIndices.count, edges: edges, triangles: [])
+        print("still okay")
         return StaticMesh(topology: as2c, geometry: floatCoordinates) 
     }
 

@@ -12,12 +12,12 @@ let cost: (simd_float3) -> Float = { x in
     return 2 + cos(vx) 
 }
 
-var optimizer = Geometry.RubberBandOptimizer(cost: cost, edgeSamples: 4)
-optimizer.loadStaticMesh(staticMesh: mesh)
-for _ in 0..<1000 {
-    optimizer.executeIteration()
-}
-mesh = optimizer.getResult()
+// var optimizer = Geometry.RubberBandOptimizer(cost: cost, edgeSamples: 4)
+// optimizer.loadStaticMesh(staticMesh: mesh)
+// for _ in 0..<1000 {
+//     optimizer.executeIteration()
+// }
+// mesh = optimizer.getResult()
 
 do {
     let encoder = JSONEncoder()

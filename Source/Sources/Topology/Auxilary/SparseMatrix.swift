@@ -15,6 +15,18 @@ Time complexities
     - Is not implemented at the moment
 
 */
+
+package struct MatrixIndex : Hashable {
+    let rowIndex: Int
+    let columnIndex: Int
+
+    init(rowIndex: Int, columnIndex: Int) {
+        assert(rowIndex >= 0 && columnIndex >= 0, "Indices must be non zero!")
+        self.rowIndex = rowIndex
+        self.columnIndex = columnIndex
+    }
+}
+
 package struct SparseMatrix<ElementType> {
     let nRows: Int
     let nColumns: Int
@@ -29,6 +41,32 @@ package struct SparseMatrix<ElementType> {
         self.nRows = nRows
         self.nColumns = nColumns
         self.cummulativeColumnEntries = Array(repeating: 0, count: nColumns)
+    }
+
+    package init(nRows: Int, nColumns: Int, indices: [MatrixIndex:ElementType]) {
+        self.init(nRows: nRows, nColumns: nColumns)
+
+        let sortedIndices = indices.keys
+            .sorted{
+                ($0.columnIndex, $0.rowIndex) < ($1.columnIndex,$1.rowIndex)
+            }
+
+        values = sortedIndices
+            .map{
+                indices[$0]
+            }
+
+        rowIndices = sortedIndices
+            .map{
+                $0.rowIndex
+            }
+        
+        var total = 0
+        for index in sortedIndices {
+            total += 1
+            cummulativeColumnEntries[index.columnIndex] = total
+        }
+
     }
 
     package func getAt(_ rowIndex: Int, _ columnIndex: Int) -> ElementType? {
