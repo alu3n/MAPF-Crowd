@@ -30,7 +30,7 @@ package enum StaticMeshFactory{
     }
 
     private static func integerToFloatCoordinates(_ x: Int, _ y: Int) -> Vec3 {
-        Vec3(Float(x),0,Float(y))
+        Vec3(Float(x),Float(y),0)
     }
 
     private static func outgoingEdges(_ row: Int, _ column: Int, _ nRows: Int, _ nColumns: Int) -> [Topology.Edge] {

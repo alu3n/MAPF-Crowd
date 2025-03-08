@@ -2,15 +2,21 @@ import Geometry
 import Foundation
 import simd
 
-var mesh = StaticMeshFactory.unitGrid(nRows: 7,nColumns: 7)
+var mesh = Geometry.StaticMeshFactory.unitGrid(nRows: 20,nColumns: 20)
 
 let cost: (simd_float3) -> Float = { x in
-    return 0
-}    
+    // return 1
+    // return sin(x.x)*cos(x.y) + 2.0
+    let vx = x.x - 20
+    let vy = x.y - 20
+    return 2 + cos(vx) 
+}
 
-var optimizer = RubberBandOptimizer(cost: cost, edgeSamples: 5)
+var optimizer = Geometry.RubberBandOptimizer(cost: cost, edgeSamples: 4)
 optimizer.loadStaticMesh(staticMesh: mesh)
-optimizer.executeIteration()
+for _ in 0..<1000 {
+    optimizer.executeIteration()
+}
 mesh = optimizer.getResult()
 
 do {

@@ -15,6 +15,10 @@ let package = Package(
             name: "Topology", 
             targets: ["Topology"]
         ),
+        .library(
+            name: "Geometry",
+            targets: ["Geometry"]
+        ),
         .executable(
             name: "Experimental", 
             targets: ["Experimental"]
@@ -26,14 +30,25 @@ let package = Package(
             branch: "main"
         )],
     targets: [
+
+        .target(name: "Geometry", dependencies: ["Topology"], path: "Sources/Geometry"),
+        .target(name: "Topology", path: "Sources/Topology"),
+        .executableTarget(
+            name: "Experimental",
+            dependencies: [
+                "Geometry",
+                "Topology",
+            ],
+            path: "Sources/Experimental"
+        ),
         .executableTarget(
             name: "CommandLineInterface",
             dependencies: [
-                "Topology"
+                "Topology",
+                "Geometry",
             ],
             path: "Sources/CommandLineInterface"
         ),
-        .target(name: "Topology", path: "Sources/Topology"),
         .testTarget(
             name: "TopologyTests",
             dependencies: [
@@ -41,17 +56,10 @@ let package = Package(
                     name: "Testing", 
                     package: "swift-testing"
                 ),
-                "Topology",
+                .target(name: "Topology"),
             ],
             path: "Tests/TopologyTests"
         ),
-        .executableTarget(
-            name: "Experimental",
-            dependencies: [
-                "Topology",
-            ],
-            path: "Sources/Experimental"
-        )
     ]
     
 )
