@@ -1,19 +1,20 @@
 import simd
 
 package class RubberBandOptimizer {
-    let cost: (Vec3) -> Float
+    let cost: (simd_float3) -> Float
     let edgeSamples: Int
-    
+    let fixedVertices: Set<Int> 
     private var staticMesh: StaticMesh?
     private var edgeSamplesCache: [[simd_float3]] = []
     private var integrals: [Float] = []
     private var meanIntegral: Float = 0
     private var edgeCorrections: [Float] = []
 
-    package init(cost: @escaping (simd_float3) -> Float, edgeSamples: Int){
+    package init(cost: @escaping (simd_float3) -> Float, edgeSamples: Int, fixedVertices: Set<Int>){
         assert(edgeSamples > 1) 
         self.cost = cost
         self.edgeSamples = edgeSamples
+        self.fixedVertices = fixedVertices 
     }
 
     package func loadStaticMesh(staticMesh: StaticMesh) {
@@ -50,9 +51,9 @@ package class RubberBandOptimizer {
 
         self.edgeSamplesCache = []
         for coords in coordinateTouples {
-            var temp: [Vec3] = [] 
+            var temp: [simd_float3] = [] 
             for sample in samples {
-                let coord: Vec3 = mix(coords.0,coords.1,t: sample)
+                let coord: simd_float3 = mix(coords.0,coords.1,t: sample)
                 temp.append(coord)
             }
             edgeSamplesCache.append(temp)
@@ -97,15 +98,16 @@ package class RubberBandOptimizer {
     }
 
     private func evaluateCorrections() {
-        let correction: Float = 0.90 
+        let correction: Float = 0.95 
 
         // let fixed = [0,19,399,380,9,390]
         // let fixed = [0]
 
         for i in 0..<integrals.count {
-            // if Double.random(in: 0.0..<1.0) > 0.2 {
+            // if Double.random(in: 0.0..<1.0) > 0.85 {
             //     continue
             // }
+
             let ia = staticMesh?.topology.edges[i].from
             let ib = staticMesh?.topology.edges[i].to
 
@@ -126,17 +128,12 @@ package class RubberBandOptimizer {
             let dega = staticMesh?.topology.getAdjacentEdges(vertexIndex: ia!).count
             let degb = staticMesh?.topology.getAdjacentEdges(vertexIndex: ib!).count
             
-            staticMesh?.geometry[ia!] += correction * correctiona / Float(dega!)
-            staticMesh?.geometry[ib!] += correction * correctionb / Float(degb!)
-            
-            // let ia = staticMesh?.topology.edges[i].from
-            // let ib = staticMesh?.topology.edges[i].to
-            // if !fixed.contains(ia!) {
-            //     staticMesh?.geometry[ia!] += correction * dirb
-            // }
-            // if !fixed.contains(ib!) {
-            //     staticMesh?.geometry[ib!] += correction * dira
-            // }
+            if !(fixedVertices.contains(ia!)) {
+                staticMesh?.geometry[ia!] += correction * correctiona / Float(dega!)
+            }
+            if !(fixedVertices.contains(ib!)) {
+                staticMesh?.geometry[ib!] += correction * correctionb / Float(degb!)
+            }
         }
     }
 

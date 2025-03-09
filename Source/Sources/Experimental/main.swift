@@ -1,38 +1,66 @@
 import Geometry
+import TerrainGenerator
 import Foundation
 import simd
+ 
+let nRows = 50
+let nColumns = 50
+let nFixed = 0
 
-var mesh = Geometry.StaticMeshFactory.unitGrid(nRows: 20,nColumns: 20)
+var mesh = Geometry.StaticMeshFactory.unitGrid(nRows: nRows,nColumns: nColumns)
+var terrainMap = FractalNoiseMap(
+    octaves: 4,
+    roughness: 0.52,
+    lacunarity: 2.11,
+    seed: 23,
+    scale: 0.015
+)
 
-let cost: (simd_float3) -> Float = { x in
-    // return 1
-    // return sin(x.x)*cos(x.y) + 2.0
-    let vx = x.x - 20
-    let vy = x.y - 20
-    return 2 + cos(vx) 
+mesh.geometry = mesh.geometry.map{
+    let coords = SIMD2<Float>($0.x,$0.y)
+    return simd_float3($0.x,$0.y,10*terrainMap.height(coordinates: coords))
 }
 
-// var optimizer = Geometry.RubberBandOptimizer(cost: cost, edgeSamples: 4)
-// optimizer.loadStaticMesh(staticMesh: mesh)
-// for _ in 0..<1000 {
-//     optimizer.executeIteration()
-// }
-// mesh = optimizer.getResult()
+let cost: (simd_float3) -> Float = { x in
+    return 1
+}
+
+let fixed = (0..<nFixed)
+    .map{ _ in
+        Int.random(in: 0..<(nRows*nColumns))
+    }
+
+var optimizer = Geometry.RubberBandOptimizer(cost: cost, edgeSamples: 3, fixedVertices: Set(fixed))
+optimizer.loadStaticMesh(staticMesh: mesh)
 
 do {
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = .prettyPrinted
-    let jsonData = try encoder.encode(mesh)
+        // let fileManager = FileManager.default
+        // let homeDirectory = fileManager.homeDirectoryForCurrentUser
+        // let repositoriesDirectory = homeDirectory.appendingPathComponent("Repositories/MAPF-Crowd/temp/")
+        //
+        // if !fileManager.fileExists(atPath: repositoriesDirectory.path) {
+        //     try fileManager.createDirectory(at: repositoriesDirectory, withIntermediateDirectories: true, attributes: nil)
+        // }
+        //
+        // let fileURL = repositoriesDirectory.appendingPathComponent("meeesh.obj")
+        // let string = ObjEncoder.encode(mesh: mesh)
+        // try string.write(to: fileURL, atomically: true, encoding: .utf8)
+ 
 
-    let fileManager = FileManager.default
-    let homeDirectory = fileManager.homeDirectoryForCurrentUser
-    let repositoriesDirectory = homeDirectory.appendingPathComponent("Repositories/MAPF-Crowd")
+    for i in 0..<10000 {
 
-    if !fileManager.fileExists(atPath: repositoriesDirectory.path) {
-        try fileManager.createDirectory(at: repositoriesDirectory, withIntermediateDirectories: true, attributes: nil)
+        optimizer.executeIteration()
+        print("Iteration \(i)")
+        let fileManager = FileManager.default
+        let homeDirectory = fileManager.homeDirectoryForCurrentUser
+        let repositoriesDirectory = homeDirectory.appendingPathComponent("Repositories/MAPF-Crowd/temp/")
+
+        if !fileManager.fileExists(atPath: repositoriesDirectory.path) {
+            try fileManager.createDirectory(at: repositoriesDirectory, withIntermediateDirectories: true, attributes: nil)
+        }
+
+        let fileURL = repositoriesDirectory.appendingPathComponent("step\(i).obj")
+        let string = ObjEncoder.encode(mesh: optimizer.getResult())
+        try string.write(to: fileURL, atomically: true, encoding: .utf8)
     }
-    
-    let fileURL = repositoriesDirectory.appendingPathComponent("numbers.json")
-     
-    try jsonData.write(to: fileURL)
 }

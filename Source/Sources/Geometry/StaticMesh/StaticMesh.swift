@@ -4,8 +4,8 @@ import simd
 
 
 package class StaticMesh : Encodable {
-    var geometry: [Vec3]
-    let topology: AS2C
+   package var geometry: [simd_float3]
+   let topology: AbstractSimplicial2Complex
 
    package init(topology: AbstractSimplicial2Complex, geometry: [simd_float3]){
         self.topology = topology
