@@ -7,18 +7,6 @@ let package = Package(
     name: "MAPF-Crowd",
     platforms: [.macOS(.v10_15)],   
     products: [
-        .library(
-            name: "Topology", 
-            targets: ["Topology"]
-        ),
-        .library(
-            name: "Geometry",
-            targets: ["Geometry"]
-        ),
-        .library(
-            name: "TerrainGenerator",
-            targets: ["TerrainGenerator"]
-        ),
         .executable(
             name: "Experimental", 
             targets: ["Experimental"]
@@ -34,6 +22,14 @@ let package = Package(
         .executable(
             name: "PathPlanner",
             targets: ["PathPlanner"]
+        ),
+        .library(
+            name: "Topology", 
+            targets: ["Topology"]
+        ),
+        .library(
+            name: "Geometry",
+            targets: ["Geometry"]
         )
     ],
     dependencies: [
@@ -44,13 +40,11 @@ let package = Package(
     targets: [
         .target(name: "Geometry", dependencies: ["Topology"], path: "Sources/Geometry"),
         .target(name: "Topology", path: "Sources/Topology"),
-        .target(name: "TerrainGenerator", path: "Sources/TerrainGenerator"),
         .executableTarget(
             name: "Experimental",
             dependencies: [
                 "Geometry",
                 "Topology",
-                "TerrainGenerator"
             ],
             path: "Sources/Experimental"
         ),

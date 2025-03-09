@@ -9,37 +9,41 @@ package class FractalNoiseMap : HeightMap {
     let roughness: Float
     let lacunarity: Float
     let frequencies: [Float]
-
+    package let inputScale: simd_float2
+    package let outputScale: Float
+    package let origin: simd_float2
     private var hashers: [Hasher]
 
-    package init(octaves: Int, roughness: Float, lacunarity: Float, seed: Int, scale: Float) {
+    package init(octaves: Int, roughness: Float, lacunarity: Float, seed: Int, inputScale: simd_float2, outputScale: Float, origin: simd_float2) {
         self.octaves = Array(0..<octaves) 
         self.roughness = roughness
         self.lacunarity = lacunarity
         self.frequencies = self.octaves
             .map{ o in 
-                pow(lacunarity,Float(o))*scale    
+                pow(lacunarity,Float(o))    
             }
         self.seed = seed
         self.hashers = (0..<octaves)
             .map{ _ in
                 Hasher()
             }
+        self.inputScale = inputScale
+        self.outputScale = outputScale
+        self.origin = origin
     }
 
-    package func height(coordinates: SIMD2<Float>) -> Float {
+    package func transform(_ coordinates: SIMD2<Float>) -> Float {
         var value: Float = 0
 
         for o in octaves {
             value += pow(roughness,Float(o)) * evaluateOctave(coordinates: coordinates, octave: o)
         }
 
-        return value
+        return value*outputScale
     }
 
     private func evaluateOctave(coordinates: SIMD2<Float>, octave: Int) -> Float {
-        let transformedCoordinates = frequencies[octave] * coordinates
-        print(frequencies[octave])
+        let transformedCoordinates = frequencies[octave] * coordinates * inputScale
         let bottomLeftFloat = floor(transformedCoordinates)
         let topRightFloat = ceil(transformedCoordinates)
         let bottomLeft = SIMD2<Int>(bottomLeftFloat)
