@@ -3,7 +3,7 @@ import Foundation
 import simd
 
 // Flat terrain
-let log = "./Log/Experiment3/"
+let log = "./Log/Experiment0/"
 let iterations = 5000
 let targetEdgeCost: Float = 1.0
 let nRows = 60
@@ -16,14 +16,15 @@ func angleCost(_ value: Float) -> Float {
 
 // // Gaussian with constant angle cost  
 // let log = "./Log/Experiment1/"
-// let iterations = 5000
+// let iterations = 10000
 // let targetEdgeCost: Float = 1.0
-// let nRows = 40
-// let nColumns = 40
+// let nRows = 60
+// let nColumns = 60
+// let correctionAmount: Float = 0.3
 // var terrainMap = GaussianMap(
-//     inputScale: simd_float2(0.1,0.1),
+//     inputScale: simd_float2(0.2,0.2),
 //     outputScale: 10,
-//     origin: simd_float2(20,20)
+//     origin: simd_float2(30,30)
 // )
 // func angleCost(_ value: Float) -> Float {
 //     return 1.0
@@ -32,10 +33,11 @@ func angleCost(_ value: Float) -> Float {
 
 // // Gaussian with variable angle cost
 // let log = "./Log/Experiment2/"
-// let iterations = 5000
+// let iterations = 10000
 // let targetEdgeCost: Float = 1.0
 // let nRows = 60
 // let nColumns = 60
+// let correctionAmount: Float = 0.3
 // var terrainMap = GaussianMap(
 //     inputScale: simd_float2(0.2,0.2),
 //     outputScale: 10,
@@ -46,12 +48,13 @@ func angleCost(_ value: Float) -> Float {
 // }
 
 
-// Terrain with constant angle cost 
+// // Terrain with constant angle cost 
 // let log = "./Log/Experiment3/"
 // let iterations = 5000
 // let targetEdgeCost: Float = 1.0
 // let nRows = 60
 // let nColumns = 60
+// let correctionAmount: Float = 0.5
 // var terrainMap = FractalNoiseMap(
 //     octaves: 5,
 //     roughness: 0.5,
@@ -65,14 +68,29 @@ func angleCost(_ value: Float) -> Float {
 //     return 1.0
 // }
 
-
-
-
-
-
+// // Terrain with constant angle cost 
+// let log = "./Log/Experiment4/"
+// let iterations = 20000
+// let targetEdgeCost: Float = 1.0
+// let nRows = 60
+// let nColumns = 60
+// let correctionAmount: Float = 0.2
+// var terrainMap = FractalNoiseMap(
+//     octaves: 5,
+//     roughness: 0.5,
+//     lacunarity: 2.01,
+//     seed: 23,
+//     inputScale: simd_float2(0.1,0.1),
+//     outputScale: 5,
+//     origin: simd_float2(0.0,0.0)
+// )
 // func angleCost(_ value: Float) -> Float {
-//     return 1.0 + 15*abs(value)
+//     return 1.0 + abs(value) * 10
 // }
+
+
+
+
 
 var mesh = Geometry.StaticMeshFactory.unitGrid(nRows: nRows,nColumns: nColumns)
 var config = ElasticOptimizerConfig(

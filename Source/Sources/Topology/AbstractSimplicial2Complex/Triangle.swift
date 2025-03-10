@@ -9,9 +9,9 @@ Edge flips are represented explicitly to avoid ambiguity of 0 indexed edge when 
 */
 
 package struct Triangle : Equatable, Hashable, Encodable {
-    let edge0: Int
-    let edge1: Int
-    let edge2: Int
+    package let edge0: Int
+    package let edge1: Int
+    package let edge2: Int
 
     let flip0: Bool
     let flip1: Bool

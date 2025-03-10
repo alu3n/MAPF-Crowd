@@ -12,8 +12,10 @@ package enum StaticMeshFactory{
             .flatMap{
                 outgoingEdges($0.0,$0.1,nRows,nColumns)
             }
+
+        let triangles: [Triangle] = []
         // Todo: Add triangles
-        let as2c = AbstractSimplicial2Complex(nVertices: vertexIndices.count, edges: edges, triangles: [])
+        let as2c = AbstractSimplicial2Complex(nVertices: vertexIndices.count, edges: edges, triangles: triangles)
         return StaticMesh(topology: as2c, geometry: floatCoordinates) 
     }
 
